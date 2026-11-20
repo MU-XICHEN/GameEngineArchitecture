@@ -1,0 +1,18 @@
+# Visual Studio workspace cache and per-user settings
+.vs/
+*.vcxproj.user
+*.suo
+
+# MSBuild output and intermediate directories for the Alder solution
+/Alder/Debug/
+/Alder/Release/
+/Alder/*/Debug/
+/Alder/*/Release/
+/Alder/*/x64/Debug/
+/Alder/*/x64/Release/
+
+/reading_lists/
+
+# Out-of-source CMake builds
+/build/
+/Alder/build/
