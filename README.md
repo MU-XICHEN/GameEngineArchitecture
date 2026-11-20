@@ -1,6 +1,6 @@
 # GameEngineArchitecture
 
-This repository holds the development plan for Alder, a C++20 game engine with Windows x64 as its first target. See the [English roadmap](docs/roadmap.en.md) or the [Chinese translation](docs/roadmap.zh-CN.md).
+This repository holds the development plan for Alder, a C++20 game engine with Windows x64 as its first target. See the [roadmap](docs/roadmap.en.md).
 
 ## Alder
 

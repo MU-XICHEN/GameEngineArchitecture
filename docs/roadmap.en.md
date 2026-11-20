@@ -1,93 +1,21 @@
 # Building a Game Engine from Scratch
 
-[中文版](roadmap.zh-CN.md)
+[Progress handoff](progress-handoff.md)
 
 Build a cross-platform C++ game engine, starting with Windows and preferably MSVC for the first build. The final exercise is to lay out a 3D room in a standalone editor, save it, then play it both inside the editor and in a standalone sample. The player can move, collect items, hear sound effects, see their score, and restart after clearing the room.
 
-## Current progress
-
-**M01.01 The boundary between the sample and the engine** · Reading and exercise pending.
-
-- **Read** Volume I §1.5, starting on PDF page 47. Focus on Figure 1.16.
-- **Completion check** Draw the direction of calls between the sample application and the engine library. Identify which architectural layers own window creation and rendering.
-- **Up next** M01.02, the engine library target. Read Volume I §§2.2.1–2.2.2, starting on PDF page 85. Compile a function that returns a version number into a static library.
-
-## Platform independence layer
-
-Volume I §1.5.5 and Figure 1.18 (PDF page 53) introduce this layer. In M05, define a public interface for windows and events, then implement its Windows backend. The main loop receives events through that interface. For example, when the user clicks the close button, the backend translates the native message into an engine close request. The main loop decides when to exit.
-
-- **Core and gameplay.** Math, resource management, world objects, and gameplay use standard C++ or engine types. The sample requests a window by title and size. The platform implementation owns its native handle.
-- **First Windows build.** Implement window creation and message processing on Windows first. Prefer standard C++ facilities for clocks, files, and threads where they meet the requirements. When native facilities are necessary, have the build target select the platform implementation.
-- **Device backends.** The input module maps device buttons to engine keys or actions. Choose the graphics API in M08.01. Keep native graphics and audio device types inside their respective backends. Use resource IDs or relative paths in scene files.
-- **Verifying a port.** Once the second platform is chosen, reuse the core, gameplay, and sample assets, and supply the required platform implementations. Verify window creation, input, and triangle rendering first. Then run the room and check sound, pickups, and restart. Record which checks passed on each platform.
-
 ## Implementation flow
 
-The six stages follow development order. Arrows show the main dependencies. Each stage adds Windows support for the relevant subsystem, from windows and input to graphics and audio.
+![Six sequential stages of Alder development with their module ranges](assets/implementation-flow.svg)
 
-```mermaid
-flowchart TD
-    subgraph L1["Stage 1 · Build and core library"]
-        A["M01 Build targets"] --> B["M02 Lifecycle and logging"]
-        B --> C["M03 Memory and IDs"]
-        A --> D["M04 Math and transforms"]
-    end
-    subgraph L2["Stage 2 · Platform layer and runtime"]
-        E["M05 Windows, events and clocks"] --> L["M05 Main loop"]
-        E --> F["M06 Input and actions"]
-        G["M07 Files and resources"]
-    end
-    subgraph L3["Stage 3 · Rendering and editor viewport"]
-        H["M08 Device and first triangle"] --> I["M09 Camera, meshes and materials"]
-        H --> V["M08–M09 Offscreen target and editor viewport"]
-        I --> V
-        I --> J["M10 Lighting and diagnostics"]
-    end
-    subgraph L4["Stage 4 · Simulation, animation and sound"]
-        K["M11 Collision and dynamics"]
-        M["M12 Animation and skinning"]
-        N["M13 Audio and spatial positioning"]
-    end
-    subgraph L5["Stage 5 · World and gameplay"]
-        O["M14 World, components and selection"] --> P["M15 Scene editing, saving and playtesting"]
-        P --> Q["M16 Pickups, scoring and completion"]
-    end
-    subgraph L6["Stage 6 · Concurrency and optimization"]
-        R["M17 Profiling and async loading"]
-    end
-    C --> E
-    C --> G
-    E --> H
-    D --> I
-    F --> I
-    G --> I
-    L --> K
-    I --> M
-    G --> N
-    I --> O
-    V --> O
-    K --> P
-    J --> Q
-    K --> Q
-    M --> Q
-    N --> Q
-    Q --> R
-```
-
-## Learning from Hazel's development history
-
-Hazel's public repository contains the Hazel engine library, the Hazelnut editor, and the Sandbox sample. Our equivalents are Engine, Editor, and Sandbox. Each application has its own entry point. Both use the engine for rendering, world management, and scene I/O. Editor owns the panels, selection state, and editor camera. Both applications can call the game code that implements the room's rules. The table follows our learning order. [Hazel repository and project goals](https://github.com/TheCherno/Hazel)
-
-| Our module | Hazel commits | How we apply the idea |
+| Stage | Main work | Milestone |
 | --- | --- | --- |
-| M05 Platform independence | [Window interface and GLFW](https://github.com/TheCherno/Hazel/commit/6815f07cd23eb5cd55cfe6fccaec5aefdc8169e8) · [Clock interface](https://github.com/TheCherno/Hazel/commit/220f424706bd852e297c39bf99ed52a25ecab468) | The main loop uses engine window and clock interfaces. The platform implementation can be replaced independently. |
-| M08 Offscreen rendering | [Framebuffer](https://github.com/TheCherno/Hazel/commit/cc54dbe9f3efba356f2d7dcc7246fedb16888660) | First render into a texture in Sandbox. Then display that texture in Editor. |
-| M09 Editor entry point and viewport | [Standalone editor target](https://github.com/TheCherno/Hazel/commit/9ddc33488e50da9550023077227a4b973867c1c2) · [Scene viewport](https://github.com/TheCherno/Hazel/commit/ba13c6d944b2f2fce37a6e241dd012376fc3d055) · [Viewport focus fix](https://github.com/TheCherno/Hazel/commit/23e113df2fe12cbb02c119fa3b4720a879e59fa4) | Verify startup, viewport display, and input focus separately. Typing in another panel must leave the camera still. |
-| M14 Object selection | [Scene hierarchy panel](https://github.com/TheCherno/Hazel/commit/857d8d60e63b23c67edf1bb10e2715fb57089597) · [Viewport picking](https://github.com/TheCherno/Hazel/commit/eb8f67e8041f1385b42ad1e5255d6c1d7ffe0df7) | Select an object from the panel first, then select the same instance by clicking in the viewport. |
-| M15 Scene files and transform tools | [Scene serialization](https://github.com/TheCherno/Hazel/commit/398e41367885ef5697bb0701d0fe1bc798c783dc) · [Transform gizmos](https://github.com/TheCherno/Hazel/commit/b833c1bb06c00ce4bebdd895d4abbcaec90ca342) | The engine owns scene I/O. The properties panel and the viewport gizmo edit the same transform. |
-| M15–M16 Playtesting | [Copy and restore the scene](https://github.com/TheCherno/Hazel/commit/816baa3e055f5b8010ebc514a775e2928e032a7f) · [Pause and step](https://github.com/TheCherno/Hazel/commit/44b3535058def24e850e1f09900d4224b3a708cb) | Play runs a separate world. On Stop, verify the editing scene, then load the same file in the standalone sample. |
-
-Hazel's public editor example primarily uses 2D rendering. In this project, a 3D mesh, a depth buffer, and a perspective camera exercise the same editing workflow. Choose the graphics backend and UI library in the relevant modules. [Hazelnut editor implementation](https://github.com/TheCherno/Hazel/blob/master/Hazelnut/src/EditorLayer.cpp)
+| 1. Build and core library (M01–M04) | Set up the engine library and sample. Add subsystem lifecycle, logging, memory management, and math. | The sample links to the engine library and runs in Debug and Release. |
+| 2. Platform independence and runtime (M05–M07) | Define window and event interfaces, then add a Windows backend, a fixed-step loop, input, and resource management. | The application opens a window, responds to input, and loads resources from files. |
+| 3. Rendering and editor viewport (M08–M10) | Draw a triangle, then add cameras, meshes, materials, lighting, and offscreen rendering. | The standalone editor displays a 3D model that can be inspected with an orbit camera. |
+| 4. Simulation, animation, and audio (M11–M13) | Implement collision, simple dynamics, skeletal animation, and spatial audio. | Separate demos show a falling sphere, a skinned mesh following its skeleton, and sound changing with source position. |
+| 5. Game world and playable sample (M14–M16) | Manage scene objects, add selection, editing, saving, and playtesting, then integrate pickups and scoring. | Playtest the same 3D room in Editor and complete it in Sandbox. |
+| 6. Profiling and concurrency (M17) | Measure a loading baseline, then implement a job queue and asynchronous resource reads. | Compare the longest frame, total loading time, and peak memory use under the same conditions. |
 
 ## How to use this roadmap
 
@@ -104,7 +32,7 @@ Hazel's public editor example primarily uses 2D rendering. In this project, a 3D
 Start here.
 
 - [ ] M01.01 **The boundary between the sample and the engine** (I §1.5, Figure 1.16). Draw an arrow from the sample to the engine library it calls. Mark the layers responsible for windows and rendering.
-- [ ] M01.02 **Engine library target** (I §2.2.1–2.2.2). Compile a function that returns a version number into a static library.
+- [ ] M01.02 **Engine library target** (I §2.2.1–2.2.2, from PDF page 85). Compile a function that returns a version number into a static library.
 - [ ] M01.03 **Standalone sample entry point** (I §2.2.2–2.2.3). Link a separate executable against the engine library. Run it and print the version number.
 - [ ] M01.04 **Build configurations** (I §2.2.4). Build and run both Debug and Release. Record a reproducible command for each configuration.
 
@@ -149,6 +77,8 @@ Prerequisite: M01.
 ### M05 Platform independence layer and main loop
 
 Prerequisites: M02 and M03.
+
+See Volume I §1.5.5, Figure 1.18 (PDF page 53). The sample supplies the window title and size. The Windows backend owns the native handle and translates native close messages into close requests that the main loop handles. See the [project overview](project-overview.md#platform-independence) for platform boundaries and port verification.
 
 - [ ] M05.01 **Platform-independent interface** (I §1.5.5). Define the public interface for creating a window and reading events. A caller can compile against engine headers alone. Parameters and return values use standard C++ or engine types.
 - [ ] M05.02 **Windows window backend** (I §1.5.5, §8.3.1). Link the Windows implementation into the sample and use the M05.01 interface to create a window with the requested title and size.
@@ -324,11 +254,3 @@ Prerequisites: M07, M10, and M16.
 | SIMD vectorization | I §4.10 |
 | General-purpose GPU computing | I §4.11 |
 | Other engine systems and gameplay topics | II Chapter 18 |
-
-## Progress handoff
-
-| Current item | Reading | Implementation or exercise | Verification record | Next step |
-| --- | --- | --- | --- | --- |
-| M01.01 The boundary between the sample and the engine | Pending | Not started | — | Read I §1.5 and locate Figure 1.16 |
-
-After completing an item, keep its row and append the next item. Record the actual commands, observed results, or conclusion of the design exercise. If you stop partway through, record the specific open question.
