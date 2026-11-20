@@ -19,8 +19,8 @@ Build a cross-platform C++ game engine, starting with Windows and preferably MSV
 
 ## How to use this roadmap
 
-- Work through the numbered items in order. Each checklist entry is a separate reading, implementation, or verification exercise. Each group lists its prerequisites and the recommended order within the group.
-- Read the cited sections and use the check on that line to decide when the item is complete. Change `- [ ]` to `- [x]` once it passes. A sketch or hand calculation can verify a design exercise. For code, record what happened when you ran it. Track progress by item ID.
+- Work through the numbered items in order. Each group lists its prerequisites and the recommended order within the group.
+- For reading-only items, read the listed sections and figures. For implementation items, complete the stated check and record the result in the handoff as **Awaiting user acceptance**. Mark the item `- [x]` and advance after the user confirms acceptance.
 - I refers to [Volume I · Foundations and Core Engine Systems](<../reading_lists/Game Engine Architecture Volume I, Foundations and Core Engine Systems.pdf>).
 - II refers to [Volume II · Graphics, Motion, and Sound](<../reading_lists/Game Engine Architecture Volume II Graphics, Motion, and Sound.pdf>).
 - Both volumes are from Jason Gregory's fourth edition. The sections identify what to read. The exercises and completion checks are specific to this project. PDF page numbers count the cover as page 1.
@@ -31,7 +31,7 @@ Build a cross-platform C++ game engine, starting with Windows and preferably MSV
 
 Start here.
 
-- [ ] M01.01 **The boundary between the sample and the engine** (I §1.5, Figure 1.16). Draw an arrow from the sample to the engine library it calls. Mark the layers responsible for windows and rendering.
+- [ ] M01.01 **The boundary between the sample and the engine**. Read Volume I §1.5, starting on PDF page 47, including Figure 1.16.
 - [ ] M01.02 **Engine library target** (I §2.2.1–2.2.2, from PDF page 85). Compile a function that returns a version number into a static library.
 - [ ] M01.03 **Standalone sample entry point** (I §2.2.2–2.2.3). Link a separate executable against the engine library. Run it and print the version number.
 - [ ] M01.04 **Build configurations** (I §2.2.4). Build and run both Debug and Release. Record a reproducible command for each configuration.
@@ -78,7 +78,7 @@ Prerequisite: M01.
 
 Prerequisites: M02 and M03.
 
-See Volume I §1.5.5, Figure 1.18 (PDF page 53). The sample supplies the window title and size. The Windows backend owns the native handle and translates native close messages into close requests that the main loop handles. See the [project overview](project-overview.md#platform-independence) for platform boundaries and port verification.
+See Volume I §1.5.5, Figure 1.18 (PDF page 53). The sample supplies the window title and size. The Windows backend owns the native handle and translates native close messages into close requests that the main loop handles. See [Platform independence](../AGENTS.md#platform-independence) for platform boundaries and port verification.
 
 - [ ] M05.01 **Platform-independent interface** (I §1.5.5). Define the public interface for creating a window and reading events. A caller can compile against engine headers alone. Parameters and return values use standard C++ or engine types.
 - [ ] M05.02 **Windows window backend** (I §1.5.5, §8.3.1). Link the Windows implementation into the sample and use the M05.01 interface to create a window with the requested title and size.
