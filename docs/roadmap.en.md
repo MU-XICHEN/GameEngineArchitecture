@@ -31,10 +31,10 @@ Build a cross-platform C++ game engine, starting with Windows and preferably MSV
 
 Start here.
 
-- [ ] M01.01 **The boundary between the sample and the engine**. Read Volume I §1.5, starting on PDF page 47, including Figure 1.16.
-- [ ] M01.02 **Engine library target** (I §2.2.1–2.2.2, from PDF page 85). Compile a function that returns a version number into a static library.
-- [ ] M01.03 **Standalone sample entry point** (I §2.2.2–2.2.3). Link a separate executable against the engine library. Run it and print the version number.
-- [ ] M01.04 **Build configurations** (I §2.2.4). Build and run both Debug and Release. Record a reproducible command for each configuration.
+- [x] M01.01 **The boundary between the sample and the engine**. Read Volume I §1.5, starting on PDF page 47, including Figure 1.16.
+- [x] M01.02 **Engine library target** (I §2.2.1–2.2.2, from PDF page 85). Compile a function that returns a version number into a static library.
+- [x] M01.03 **Standalone sample entry point** (I §2.2.2–2.2.3). Link a separate executable against the engine library. Run it and print the version number.
+- [x] M01.04 **Build configurations** (I §2.2.4). Build and run both Debug and Release. Record a reproducible command for each configuration.
 
 ### M02 Subsystem lifecycle and diagnostics
 

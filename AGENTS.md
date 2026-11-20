@@ -5,6 +5,8 @@ Use English for project content, including source identifiers and comments, buil
 Use the language of the user's message for progress updates and replies.
 
 - Before creating or modifying source code, read and follow the [coding standards](docs/coding-standards.md).
+- Add brief English [comments](docs/coding-standards.md#code-comments) for public interfaces, implementation details that need context, and CMake build decisions.
+- After editing C++ source or headers, format the changed files with the [Alder clang-format configuration](Alder/.clang-format) before verification.
 - Record the technical details of each implementation change in the [development log](docs/devlog.md).
 - Before committing, follow the [commit message conventions](docs/commit-messages.md).
 
